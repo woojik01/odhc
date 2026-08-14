@@ -1,17 +1,25 @@
-
 {
-  "name": "On Device Health Care",
-  "short_name": "ODHC",
-  "description": "빠른 기록, 캘린더 중심, 완전 온디바이스 헬스 기록 앱",
-  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "dir": "auto",
   "display": "standalone",
-  "display_override": ["standalone","minimal-ui"],
-  "background_color": "#fafafa",
-  "theme_color": "#111111",
+  "name": "On Device Health Care",
+  "orientation": "portrait",
   "scope": "./",
-  "icons": [
-    {"src": "icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src": "icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
-    {"src": "icons/icon-512-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  "short_name": "ODHC",
+  "start_url": "./index.html",
+  "theme_color": "#ffffff",
+  "id": "woojik01-odhc",
+  "description": "빠른 기록, 캘린더 중심, 완전 온디바이스 헬스 기록 앱",
+  "lang": "ko",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "window-controls-overlay"
+  ],
+  "categories": [
+    "fitness",
+    "health",
+    "health &amp; fitness",
+    "lifestyle"
   ]
 }
