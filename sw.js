@@ -1,5 +1,4 @@
-
-const CACHE='odhc-v3';
+const CACHE='odhc-v4';
 const ASSETS=[
   './',
   './index.html',
@@ -11,6 +10,7 @@ const ASSETS=[
   './css/components.css',
   './css/responsive.css',
   './js/app.js',
+  './js/mobile-focus-fix.js',
   './js/db/database.js',
   './js/db/exercises.js',
   './js/db/workouts.js',
