@@ -137,225 +137,53 @@ async function renderCalendar(){
   document.getElementById('add-on-date')?.addEventListener('click',()=>router('records'));
 }
 
-
 async function renderRecords(){
-  // Load workout for selectedDate, but keep in-memory edits if any
   let workout=await getByDate(selectedDate);
   if(!workout) workout={id:selectedDate,date:selectedDate,duration:0,exercises:[],createdAt:Date.now(),updatedAt:Date.now()};
-  
-  // Store current workout in closure variable for date change handling
-  let currentWorkout = workout;
-
   let html=`<div class="header"><h1>기록</h1><input type="date" id="date-input" value="${selectedDate}" style="width:auto"></div>`;
   html+=`<div class="card"><div class="row"><span style="font-size:13px;color:var(--sub)">운동 시간</span><input id="duration" type="number" inputmode="numeric" placeholder="분" value="${workout.duration||''}" style="width:100px"><span style="color:var(--sub)">분</span></div></div>`;
-  html+=`<div id="records-list" class="stack" style="margin-top:12px">`;
+  html+=`<div class="stack" style="margin-top:12px">`;
   if(workout.exercises.length===0) html+=`<div class="card empty">운동을 추가해보세요</div>`;
   for(let idx=0;idx<workout.exercises.length;idx++){
     const ex=workout.exercises[idx];
-    html+=`<div class="card" data-ex-card="${idx}"><div class="row" style="justify-content:space-between"><div style="font-weight:800">${ex.exerciseNameSnapshot}</div><button class="btn-ghost" data-del-ex="${idx}">삭제</button></div>`;
+    html+=`<div class="card"><div class="row" style="justify-content:space-between"><div style="font-weight:800">${ex.exerciseNameSnapshot}</div><button class="btn-ghost" data-del-ex="${idx}">삭제</button></div>`;
     ex.sets.forEach((s,i)=>{
-      html+=`<div class="set-row" data-set-row="${idx}-${i}"><span class="idx">${i+1}세트</span><input type="number" inputmode="decimal" data-ex="${idx}" data-set="${i}" data-field="weight" value="${s.weight}"><span style="color:var(--sub)">kg ×</span><input type="number" inputmode="numeric" data-ex="${idx}" data-set="${i}" data-field="reps" value="${s.reps}"><span style="color:var(--sub)">회</span><button class="btn-ghost" data-del-set="${idx}-${i}">✕</button></div>`;
+      html+=`<div class="set-row"><span class="idx">${i+1}세트</span><input type="number" inputmode="decimal" data-ex="${idx}" data-set="${i}" data-field="weight" value="${s.weight}"><span style="color:var(--sub)">kg ×</span><input type="number" inputmode="numeric" data-ex="${idx}" data-set="${i}" data-field="reps" value="${s.reps}"><span style="color:var(--sub)">회</span><button class="btn-ghost" data-del-set="${idx}-${i}">✕</button></div>`;
     });
     html+=`<div class="row" style="margin-top:6px"><button class="btn-secondary" data-add-set="${idx}">+ 세트 추가</button></div>`;
     html+=`<textarea data-memo="${idx}" placeholder="메모 (선택)">${ex.memo||''}</textarea></div>`;
   }
   html+=`</div><div class="row" style="margin-top:12px"><button class="btn-secondary" id="btn-add-ex" style="flex:1">+ 운동 추가</button><button class="btn-primary" id="btn-save" style="flex:1">저장</button></div>`;
   $app.innerHTML=html;
-
-  // --- Date change handler with move logic ---
-  const dateInput = document.getElementById('date-input');
-  dateInput.addEventListener('change', async (e)=>{
-    const newDate = e.target.value;
-    const oldDate = selectedDate;
-    if(!newDate || newDate===oldDate) return;
-
-    // Preserve current in-memory edits (collect from DOM)
-    // Read duration
-    const durInput = document.getElementById('duration');
-    if(durInput) currentWorkout.duration = Number(durInput.value)||0;
-    // Read memos
-    document.querySelectorAll('textarea[data-memo]').forEach(ta=>{
-      const exIdx=Number(ta.dataset.memo);
-      if(currentWorkout.exercises[exIdx]){
-        currentWorkout.exercises[exIdx].memo = ta.value;
-        if(!ta.value.trim()) delete currentWorkout.exercises[exIdx].memo;
-      }
-    });
-    // Read sets
-    document.querySelectorAll('input[data-field]').forEach(inp=>{
-      const exIdx=Number(inp.dataset.ex);
-      const setIdx=Number(inp.dataset.set);
-      const field=inp.dataset.field;
-      if(currentWorkout.exercises[exIdx] && currentWorkout.exercises[exIdx].sets[setIdx]){
-        currentWorkout.exercises[exIdx].sets[setIdx][field]=Number(inp.value)||0;
-      }
-    });
-
-    if(currentWorkout.exercises.length===0 && !currentWorkout.duration){
-      // Nothing to move, just switch date
-      selectedDate = newDate;
-      renderRecords();
-      return;
-    }
-
-    // Check if target date already has a workout
-    const existingTarget = await getByDate(newDate);
-    if(existingTarget){
-      const confirmMerge = confirm(`${newDate}에 이미 기록이 있습니다. 합치시겠습니까? (취소하면 덮어씁니다)`);
-      if(confirmMerge){
-        // Merge: append current exercises to existing
-        existingTarget.exercises = [...existingTarget.exercises, ...currentWorkout.exercises];
-        existingTarget.duration = existingTarget.duration || currentWorkout.duration;
-        existingTarget.updatedAt = Date.now();
-        await saveWorkout(existingTarget);
-        // Delete old if different
-        if(oldDate!==newDate){
-          const oldSaved = await getByDate(oldDate);
-          if(oldSaved && oldSaved.id!==existingTarget.id){
-            // Only delete old if it was saved and we moved
-            if(confirm(`${oldDate}의 기존 기록을 삭제하고 ${newDate}로 옮길까요?`)){
-              await deleteWorkout(oldSaved.id);
-            }
-          }
-        }
-        selectedDate = newDate;
-        renderRecords();
-        return;
-      } else {
-        // Overwrite target with current
-        // Delete old
-        if(oldDate!==newDate){
-          const oldSaved = await getByDate(oldDate);
-          if(oldSaved) await deleteWorkout(oldSaved.id);
-        }
-        const newWorkout = {...currentWorkout, date:newDate, id:newDate, updatedAt:Date.now()};
-        await saveWorkout(newWorkout);
-        if(existingTarget.id!==newDate) await deleteWorkout(existingTarget.id);
-        selectedDate = newDate;
-        renderRecords();
-        return;
-      }
-    }
-
-    // No existing target, move current workout to new date
-    const oldSaved = await getByDate(oldDate);
-    if(oldSaved){
-      await deleteWorkout(oldSaved.id);
-    }
-    const moved = {...currentWorkout, date:newDate, id:newDate, updatedAt:Date.now()};
-    await saveWorkout(moved);
-    selectedDate = newDate;
-    renderRecords();
-  });
-
-  document.getElementById('duration').addEventListener('input', e=>{
-    currentWorkout.duration=Number(e.target.value)||0;
-  });
-
-  // Sets - update in-memory without full re-render for weight/reps to keep keyboard
+  document.getElementById('date-input').onchange=e=>{selectedDate=e.target.value;renderRecords();};
+  document.getElementById('duration').oninput=e=>{workout.duration=Number(e.target.value)||0;};
   $app.querySelectorAll('input[data-field]').forEach(inp=>{
-    inp.addEventListener('input', e=>{
-      const exIdx=Number(e.target.dataset.ex);
-      const setIdx=Number(e.target.dataset.set);
-      const f=e.target.dataset.field;
-      if(currentWorkout.exercises[exIdx] && currentWorkout.exercises[exIdx].sets[setIdx]){
-        currentWorkout.exercises[exIdx].sets[setIdx][f]=Number(e.target.value)||0;
-        currentWorkout.updatedAt=Date.now();
-      }
-    });
-    inp.addEventListener('change', ()=>{
-      // Save on blur/change
-      saveWorkout(currentWorkout);
-    });
+    inp.oninput=e=>{const exIdx=Number(e.target.dataset.ex);const setIdx=Number(e.target.dataset.set);const f=e.target.dataset.field;workout.exercises[exIdx].sets[setIdx][f]=Number(e.target.value)||0;};
   });
-
   $app.querySelectorAll('textarea[data-memo]').forEach(ta=>{
-    ta.addEventListener('input', e=>{
-      const exIdx=Number(e.target.dataset.memo);
-      if(currentWorkout.exercises[exIdx]){
-        currentWorkout.exercises[exIdx].memo=e.target.value;
-        if(!e.target.value.trim()) delete currentWorkout.exercises[exIdx].memo;
-      }
-    });
-    ta.addEventListener('change', ()=>{
-      saveWorkout(currentWorkout);
-    });
+    ta.oninput=e=>{const exIdx=Number(e.target.dataset.memo);workout.exercises[exIdx].memo=e.target.value;if(!e.target.value)delete workout.exercises[exIdx].memo;};
   });
-
   $app.querySelectorAll('[data-add-set]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const exIdx=Number(btn.dataset.addSet);
-      const last=currentWorkout.exercises[exIdx].sets[currentWorkout.exercises[exIdx].sets.length-1]||{weight:40,reps:10};
-      currentWorkout.exercises[exIdx].sets.push({weight:last.weight,reps:last.reps});
-      currentWorkout.updatedAt=Date.now();
-      await saveWorkout(currentWorkout);
-      // Instead of full re-render, insert new row in place
-      renderRecords();
-    });
+    btn.onclick=()=>{const exIdx=Number(btn.dataset.addSet);const last=workout.exercises[exIdx].sets[workout.exercises[exIdx].sets.length-1]||{weight:40,reps:10};workout.exercises[exIdx].sets.push({weight:last.weight,reps:last.reps});saveWorkout(workout).then(()=>renderRecords());};
   });
-
   $app.querySelectorAll('[data-del-set]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const [exIdx,setIdx]=btn.dataset.delSet.split('-').map(Number);
-      currentWorkout.exercises[exIdx].sets.splice(setIdx,1);
-      currentWorkout.updatedAt=Date.now();
-      await saveWorkout(currentWorkout);
-      renderRecords();
-    });
+    btn.onclick=()=>{const [exIdx,setIdx]=btn.dataset.delSet.split('-').map(Number);workout.exercises[exIdx].sets.splice(setIdx,1);saveWorkout(workout).then(()=>renderRecords());};
   });
-
   $app.querySelectorAll('[data-del-ex]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const exIdx=Number(btn.dataset.delEx);
-      if(confirm('이 운동을 삭제할까요?')){
-        currentWorkout.exercises.splice(exIdx,1);
-        currentWorkout.updatedAt=Date.now();
-        await saveWorkout(currentWorkout);
-        renderRecords();
-      }
-    });
+    btn.onclick=()=>{const exIdx=Number(btn.dataset.delEx);workout.exercises.splice(exIdx,1);saveWorkout(workout).then(()=>renderRecords());};
   });
-
-  document.getElementById('btn-save').addEventListener('click', async()=>{
-    // Collect latest from DOM again
-    const dur = document.getElementById('duration');
-    if(dur) currentWorkout.duration = Number(dur.value)||0;
-    document.querySelectorAll('textarea[data-memo]').forEach(ta=>{
-      const exIdx=Number(ta.dataset.memo);
-      if(currentWorkout.exercises[exIdx]){
-        currentWorkout.exercises[exIdx].memo=ta.value;
-        if(!ta.value.trim()) delete currentWorkout.exercises[exIdx].memo;
-      }
-    });
-    document.querySelectorAll('input[data-field]').forEach(inp=>{
-      const exIdx=Number(inp.dataset.ex);
-      const setIdx=Number(inp.dataset.set);
-      const field=inp.dataset.field;
-      if(currentWorkout.exercises[exIdx] && currentWorkout.exercises[exIdx].sets[setIdx]){
-        currentWorkout.exercises[exIdx].sets[setIdx][field]=Number(inp.value)||0;
-      }
-    });
-
-    currentWorkout.exercises.forEach(ex=>{if(!ex.memo||!ex.memo.trim())delete ex.memo;});
-    if(currentWorkout.exercises.length===0&&!currentWorkout.duration){alert('운동을 추가하세요');return;}
-    currentWorkout.updatedAt=Date.now();
-    currentWorkout.date=selectedDate;
-    currentWorkout.id=selectedDate;
-    await saveWorkout(currentWorkout);
-    alert('저장되었습니다');
-    router('calendar');
-  });
-
-  document.getElementById('btn-add-ex').addEventListener('click', ()=>openExercisePicker(async chosen=>{
+  document.getElementById('btn-save').onclick=async()=>{
+    workout.exercises.forEach(ex=>{if(!ex.memo||!ex.memo.trim())delete ex.memo;});
+    if(workout.exercises.length===0&&!workout.duration){alert('운동을 추가하세요');return;}
+    workout.updatedAt=Date.now();await saveWorkout(workout);alert('저장되었습니다');router('calendar');
+  };
+  document.getElementById('btn-add-ex').onclick=()=>openExercisePicker(async chosen=>{
     const lastSets=await lastSetsForExercise(chosen.id);
     const sets=lastSets?lastSets.map(s=>({...s})): [{weight:40,reps:10}];
-    currentWorkout.exercises.push({exerciseId:chosen.id,exerciseNameSnapshot:chosen.name,sets,memo:''});
-    currentWorkout.updatedAt=Date.now();
-    await saveWorkout(currentWorkout);
-    renderRecords();
-  }));
+    workout.exercises.push({exerciseId:chosen.id,exerciseNameSnapshot:chosen.name,sets,memo:''});
+    await saveWorkout(workout);renderRecords();
+  });
 }
-
 
 let pickerCallback=null;
 function openExercisePicker(cb){pickerCallback=cb;document.getElementById('ex-modal').classList.add('open');renderPickerList('');}
