@@ -1,1 +1,28 @@
-@media(min-width:900px){.bottom-nav{bottom:16px;border:1px solid var(--border);border-radius:20px;overflow:hidden}}
+/* Mobile-safe set editor layout */
+.set-row{
+  display:grid;
+  grid-template-columns:auto minmax(0,72px) auto minmax(0,72px) auto 40px;
+  align-items:center;
+  gap:8px;
+  width:100%;
+}
+.set-row input[data-field]{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  padding-left:10px;
+  padding-right:10px;
+}
+.set-row .btn-ghost{
+  width:40px;
+  min-width:40px;
+  padding:0;
+}
+
+@media(max-width:899px){
+  .set-row{gap:6px;}
+}
+
+@media(min-width:900px){
+  .bottom-nav{bottom:16px;border:1px solid var(--border);border-radius:20px;overflow:hidden}
+}
