@@ -148,6 +148,7 @@ async function renderPickerList(q){
     input.addEventListener('compositionstart',()=>{pickerComposing=true;});
     input.addEventListener('compositionend',e=>{pickerComposing=false;pickerQuery=e.target.value;renderPickerList(e.target.value);});
     input.addEventListener('input',e=>{if(!pickerComposing)renderPickerList(e.target.value);});
+    shell.querySelectorAll('[data-muscle]').forEach(button=>button.addEventListener('click',()=>{const muscle=button.dataset.muscle;const results=document.getElementById('ex-picker-results');shell.querySelectorAll('[data-muscle]').forEach(b=>b.classList.toggle('active',b===button));if(!results)return;results.querySelectorAll(':scope > div').forEach(section=>{const title=section.querySelector('.widget-title');if(!title)return;section.hidden=!!muscle&&title.textContent.trim()!==muscle;});}));
   }
   const input=document.getElementById('ex-search');
   const results=document.getElementById('ex-picker-results');if(!input||!results)return;
@@ -156,6 +157,7 @@ async function renderPickerList(q){
   for(const mus of muscles){const list=filtered.filter(e=>e.muscle===mus);if(!list.length)continue;html+=`<div style="margin-top:12px"><div class="widget-title">${mus}</div><div class="stack">${list.map(e=>`<div class="card" data-pick-id="${e.id}" style="cursor:pointer"><div style="font-weight:700">${e.name}</div><div style="font-size:12px;color:var(--sub)">${e.muscle}</div></div>`).join('')}</div></div>`;}
   results.innerHTML=html;
   results.querySelectorAll('[data-pick-id]').forEach(el=>el.onclick=async()=>{const id=el.dataset.pickId;const ex=(await listExercises()).find(x=>x.id===id);if(ex&&pickerCallback){pickerCallback(ex);closePicker();}});
+  const active=shell.querySelector('#ex-picker-muscles .active');if(active&&active.dataset.muscle){results.querySelectorAll(':scope > div').forEach(section=>{const title=section.querySelector('.widget-title');if(title)section.hidden=title.textContent.trim()!==active.dataset.muscle;});}
 }
 
 async function renderExercises(){
