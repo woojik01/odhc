@@ -1,4 +1,3 @@
-
 // Theme handling - must run early
 (function(){
   const saved = localStorage.getItem('odhc-theme') || 'auto';
@@ -186,50 +185,66 @@ async function renderRecords(){
 }
 
 let pickerCallback=null;
-function openExercisePicker(cb){pickerCallback=cb;document.getElementById('ex-modal').classList.add('open');renderPickerList('');}
+let pickerQuery='';
+function openExercisePicker(cb){pickerCallback=cb;pickerQuery='';document.getElementById('ex-modal').classList.add('open');renderPickerList('');}
 function closePicker(){document.getElementById('ex-modal').classList.remove('open');}
 async function renderPickerList(q){
+  pickerQuery=q;
   const all=await listExercises();const recent=await recentExercises(10);const qL=q.toLowerCase();
   let filtered=all.filter(e=>!q||e.name.toLowerCase().includes(qL)||e.muscle.includes(q));
   const muscles=['가슴','등','하체','어깨','팔','복근','전신'];
-  let html=`<div class="search-box" style="position:sticky;top:0;background:var(--card);padding-bottom:8px;z-index:1"><input id="ex-search" placeholder="🔍 운동 검색" value="${q}"><div class="chips" style="margin-top:8px"><button data-muscle="" class="active">전체</button>${muscles.map(m=>`<button data-muscle="${m}">${m}</button>`).join('')}</div></div>`;
+  const modal=document.getElementById('ex-modal-content');
+  let shell=document.getElementById('ex-picker-shell');
+  if(!shell){
+    shell=document.createElement('div');
+    shell.id='ex-picker-shell';
+    shell.innerHTML=`<div class="search-box" style="position:sticky;top:0;background:var(--card);padding-bottom:8px;z-index:1"><input id="ex-search" placeholder="🔍 운동 검색"><div class="chips" id="ex-picker-muscles" style="margin-top:8px"><button data-muscle="" class="active">전체</button>${muscles.map(m=>`<button data-muscle="${m}">${m}</button>`).join('')}</div></div><div id="ex-picker-results"></div>`;
+    modal.appendChild(shell);
+    document.getElementById('ex-search').oninput=e=>renderPickerList(e.target.value);
+  }
+  const input=document.getElementById('ex-search');
+  if(input && input.value!==q) input.value=q;
+  const results=document.getElementById('ex-picker-results');
+  let html='';
   if(recent.length&&!q) html+=`<div style="margin-top:12px"><div class="widget-title">최근 운동</div><div class="stack">${recent.map(r=>`<div class="card" data-pick-id="${r.exerciseId}" style="cursor:pointer">${r.name} · ${r.date}</div>`).join('')}</div></div>`;
   for(const mus of muscles){
     const list=filtered.filter(e=>e.muscle===mus);if(!list.length)continue;
     html+=`<div style="margin-top:12px"><div class="widget-title">${mus}</div><div class="stack">${list.map(e=>`<div class="card" data-pick-id="${e.id}" style="cursor:pointer"><div style="font-weight:700">${e.name}</div><div style="font-size:12px;color:var(--sub)">${e.muscle}</div></div>`).join('')}</div></div>`;
   }
-  document.getElementById('ex-modal-content').innerHTML=html;
-  document.getElementById('ex-search').oninput=e=>renderPickerList(e.target.value);
-  document.getElementById('ex-modal-content').querySelectorAll('[data-pick-id]').forEach(el=>{
+  results.innerHTML=html;
+  results.querySelectorAll('[data-pick-id]').forEach(el=>{
     el.onclick=async()=>{const id=el.dataset.pickId;const ex=(await listExercises()).find(x=>x.id===id);if(ex&&pickerCallback){pickerCallback(ex);closePicker();}};
   });
 }
 
 async function renderExercises(){
   const all=await listExercises();let q='';let activeMuscle='전체';const muscles=['전체','가슴','등','하체','어깨','팔','복근','전신'];
-  const draw=()=>{
+  let detailEl=null;
+  const drawResults=()=>{
     let filtered=all;if(activeMuscle!=='전체')filtered=filtered.filter(e=>e.muscle===activeMuscle);if(q)filtered=filtered.filter(e=>e.name.toLowerCase().includes(q.toLowerCase()));
-    let html=`<div class="header"><h1>운동</h1><button class="btn-primary" id="btn-new-ex">+ 추가</button></div>`;
-    html+=`<div class="card"><input id="ex-search-main" placeholder="🔍 운동 검색" value="${q}"><div class="chips" style="margin-top:8px">${muscles.map(m=>`<button data-m="${m}" class="${m===activeMuscle?'active':''}">${m}</button>`).join('')}</div></div>`;
-    html+=`<div class="stack" style="margin-top:12px">`;
+    let html='';
     const grouped={};filtered.forEach(e=>{if(!grouped[e.muscle])grouped[e.muscle]=[];grouped[e.muscle].push(e);});
     for(const mus of Object.keys(grouped)){html+=`<div><div class="widget-title">${mus}</div><div class="stack">${grouped[mus].map(e=>`<div class="card" data-ex-id="${e.id}" style="cursor:pointer"><div style="display:flex;justify-content:space-between"><span style="font-weight:700">${e.name}</span><span class="badge">${e.source==='custom'?'커스텀':'기본'}</span></div></div>`).join('')}</div></div>`;}
-    html+=`</div>`;$app.innerHTML=html;
-    document.getElementById('ex-search-main').oninput=e=>{q=e.target.value;draw();};
-    $app.querySelectorAll('[data-m]').forEach(b=>{b.onclick=()=>{activeMuscle=b.dataset.m;draw();}});
-    document.getElementById('btn-new-ex').onclick=()=>document.getElementById('new-ex-modal').classList.add('open');
-    $app.querySelectorAll('[data-ex-id]').forEach(el=>{
+    const results=document.getElementById('exercise-results');
+    if(results)results.innerHTML=html;
+    results?.querySelectorAll('[data-ex-id]').forEach(el=>{
       el.onclick=async()=>{
         const id=el.dataset.exId;const ex=all.find(x=>x.id===id);
         const workouts=await listWorkouts();const history=[];workouts.filter(w=>w.exercises.some(ee=>ee.exerciseId===id)).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).forEach(w=>{const ee=w.exercises.find(eee=>eee.exerciseId===id);history.push({date:w.date,sets:ee.sets});});
         let h=`<div class="card" style="margin-top:12px"><div style="font-weight:800">${ex.name}</div><div style="font-size:12px;color:var(--sub)">${ex.muscle}</div>`;
         h+=history.length?history.map(h=>`<div style="margin-top:8px"><div style="font-size:12px;color:var(--sub)">${h.date}</div><div style="font-size:14px">${h.sets.map(s=>`${s.weight}kg × ${s.reps}`).join(', ')}</div></div>`).join(''):'<div class="empty">기록 없음</div>';
         if(ex.source==='custom')h+=`<button class="btn-secondary" id="del-ex" style="width:100%;margin-top:12px">삭제</button>`;
-        h+=`</div>`;const exDiv=document.getElementById('ex-detail');if(exDiv)exDiv.remove();const d=document.createElement('div');d.id='ex-detail';d.innerHTML=h;$app.appendChild(d);
-        document.getElementById('del-ex')?.addEventListener('click',async()=>{if(confirm('삭제할까요?')){await deleteExercise(id);draw();document.getElementById('ex-detail')?.remove();}});
+        if(detailEl)detailEl.remove();detailEl=document.createElement('div');detailEl.id='ex-detail';detailEl.innerHTML=h;$app.appendChild(detailEl);
+        document.getElementById('del-ex')?.addEventListener('click',async()=>{if(confirm('삭제할까요?')){await deleteExercise(id);drawResults();detailEl?.remove();detailEl=null;}});
       };
     });
-  };draw();
+  };
+  $app.innerHTML=`<div class="header"><h1>운동</h1><button class="btn-primary" id="btn-new-ex">+ 추가</button></div><div class="card"><input id="ex-search-main" placeholder="🔍 운동 검색" value="${q}"><div class="chips" id="ex-muscles" style="margin-top:8px">${muscles.map(m=>`<button data-m="${m}" class="${m===activeMuscle?'active':''}">${m}</button>`).join('')}</div></div><div id="exercise-results" class="stack" style="margin-top:12px"></div>`;
+  const search=document.getElementById('ex-search-main');
+  search.oninput=e=>{q=e.target.value;drawResults();};
+  $app.querySelectorAll('#ex-muscles [data-m]').forEach(b=>{b.onclick=()=>{activeMuscle=b.dataset.m;drawResults();$app.querySelectorAll('#ex-muscles [data-m]').forEach(x=>x.classList.toggle('active',x.dataset.m===activeMuscle));};});
+  document.getElementById('btn-new-ex').onclick=()=>document.getElementById('new-ex-modal').classList.add('open');
+  drawResults();
 }
 
 async function renderSettings(){
