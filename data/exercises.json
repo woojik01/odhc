@@ -1,0 +1,352 @@
+[
+  {
+    "id": "bench-press",
+    "name": "벤치 프레스",
+    "muscle": "가슴",
+    "description": "가장 기본적인 가슴 운동",
+    "source": "builtin"
+  },
+  {
+    "id": "incline-bench-press",
+    "name": "인클라인 벤치 프레스",
+    "muscle": "가슴",
+    "description": "상부 가슴 집중",
+    "source": "builtin"
+  },
+  {
+    "id": "decline-bench-press",
+    "name": "디클라인 벤치 프레스",
+    "muscle": "가슴",
+    "description": "하부 가슴 집중",
+    "source": "builtin"
+  },
+  {
+    "id": "dumbbell-bench-press",
+    "name": "덤벨 벤치 프레스",
+    "muscle": "가슴",
+    "description": "덤벨 가슴 프레스",
+    "source": "builtin"
+  },
+  {
+    "id": "incline-dumbbell-press",
+    "name": "인클라인 덤벨 프레스",
+    "muscle": "가슴",
+    "description": "상부 가슴 덤벨",
+    "source": "builtin"
+  },
+  {
+    "id": "chest-fly",
+    "name": "체스트 플라이",
+    "muscle": "가슴",
+    "description": "가슴 벌리기",
+    "source": "builtin"
+  },
+  {
+    "id": "push-up",
+    "name": "푸시업",
+    "muscle": "가슴",
+    "description": "맨몸 가슴",
+    "source": "builtin"
+  },
+  {
+    "id": "dips",
+    "name": "딥스",
+    "muscle": "가슴",
+    "description": "가슴 및 삼두",
+    "source": "builtin"
+  },
+  {
+    "id": "lat-pulldown",
+    "name": "랫풀다운",
+    "muscle": "등",
+    "description": "광배근 기본",
+    "source": "builtin"
+  },
+  {
+    "id": "pull-up",
+    "name": "풀업",
+    "muscle": "등",
+    "description": "맨몸 등",
+    "source": "builtin"
+  },
+  {
+    "id": "barbell-row",
+    "name": "바벨 로우",
+    "muscle": "등",
+    "description": "등 두께",
+    "source": "builtin"
+  },
+  {
+    "id": "dumbbell-row",
+    "name": "덤벨 로우",
+    "muscle": "등",
+    "description": "한팔 로우",
+    "source": "builtin"
+  },
+  {
+    "id": "seated-row",
+    "name": "시티드 로우",
+    "muscle": "등",
+    "description": "케이블 로우",
+    "source": "builtin"
+  },
+  {
+    "id": "deadlift",
+    "name": "데드리프트",
+    "muscle": "등",
+    "description": "등 전체",
+    "source": "builtin"
+  },
+  {
+    "id": "t-bar-row",
+    "name": "티바 로우",
+    "muscle": "등",
+    "description": "등 중앙",
+    "source": "builtin"
+  },
+  {
+    "id": "face-pull",
+    "name": "페이스 풀",
+    "muscle": "등",
+    "description": "후면 어깨",
+    "source": "builtin"
+  },
+  {
+    "id": "squat",
+    "name": "스쿼트",
+    "muscle": "하체",
+    "description": "하체 기본",
+    "source": "builtin"
+  },
+  {
+    "id": "front-squat",
+    "name": "프론트 스쿼트",
+    "muscle": "하체",
+    "description": "전면 하중",
+    "source": "builtin"
+  },
+  {
+    "id": "leg-press",
+    "name": "레그 프레스",
+    "muscle": "하체",
+    "description": "머신 하체",
+    "source": "builtin"
+  },
+  {
+    "id": "leg-extension",
+    "name": "레그 익스텐션",
+    "muscle": "하체",
+    "description": "대퇴사두",
+    "source": "builtin"
+  },
+  {
+    "id": "leg-curl",
+    "name": "레그 컬",
+    "muscle": "하체",
+    "description": "햄스트링",
+    "source": "builtin"
+  },
+  {
+    "id": "romanian-deadlift",
+    "name": "루마니안 데드리프트",
+    "muscle": "하체",
+    "description": "햄스트링 및 둔근",
+    "source": "builtin"
+  },
+  {
+    "id": "hip-thrust",
+    "name": "힙 쓰러스트",
+    "muscle": "하체",
+    "description": "둔근",
+    "source": "builtin"
+  },
+  {
+    "id": "calf-raise",
+    "name": "카프 레이즈",
+    "muscle": "하체",
+    "description": "종아리",
+    "source": "builtin"
+  },
+  {
+    "id": "lunge",
+    "name": "런지",
+    "muscle": "하체",
+    "description": "한발 하체",
+    "source": "builtin"
+  },
+  {
+    "id": "bulgarian-split-squat",
+    "name": "불가리안 스플릿 스쿼트",
+    "muscle": "하체",
+    "description": "한발 스쿼트",
+    "source": "builtin"
+  },
+  {
+    "id": "overhead-press",
+    "name": "오버헤드 프레스",
+    "muscle": "어깨",
+    "description": "어깨 기본",
+    "source": "builtin"
+  },
+  {
+    "id": "dumbbell-shoulder-press",
+    "name": "덤벨 숄더 프레스",
+    "muscle": "어깨",
+    "description": "덤벨 어깨",
+    "source": "builtin"
+  },
+  {
+    "id": "lateral-raise",
+    "name": "레터럴 레이즈",
+    "muscle": "어깨",
+    "description": "측면 어깨",
+    "source": "builtin"
+  },
+  {
+    "id": "front-raise",
+    "name": "프론트 레이즈",
+    "muscle": "어깨",
+    "description": "전면 어깨",
+    "source": "builtin"
+  },
+  {
+    "id": "rear-delt-fly",
+    "name": "리어 델트 플라이",
+    "muscle": "어깨",
+    "description": "후면 어깨",
+    "source": "builtin"
+  },
+  {
+    "id": "arnold-press",
+    "name": "아놀드 프레스",
+    "muscle": "어깨",
+    "description": "회전 프레스",
+    "source": "builtin"
+  },
+  {
+    "id": "upright-row",
+    "name": "업라이트 로우",
+    "muscle": "어깨",
+    "description": "승모 및 어깨",
+    "source": "builtin"
+  },
+  {
+    "id": "shrug",
+    "name": "슈러그",
+    "muscle": "어깨",
+    "description": "승모근",
+    "source": "builtin"
+  },
+  {
+    "id": "biceps-curl",
+    "name": "바이셉 컬",
+    "muscle": "팔",
+    "description": "이두 기본",
+    "source": "builtin"
+  },
+  {
+    "id": "dumbbell-curl",
+    "name": "덤벨 컬",
+    "muscle": "팔",
+    "description": "덤벨 이두",
+    "source": "builtin"
+  },
+  {
+    "id": "hammer-curl",
+    "name": "해머 컬",
+    "muscle": "팔",
+    "description": "브라키알리스",
+    "source": "builtin"
+  },
+  {
+    "id": "triceps-extension",
+    "name": "트라이셉 익스텐션",
+    "muscle": "팔",
+    "description": "삼두",
+    "source": "builtin"
+  },
+  {
+    "id": "triceps-pushdown",
+    "name": "트라이셉 푸시다운",
+    "muscle": "팔",
+    "description": "케이블 삼두",
+    "source": "builtin"
+  },
+  {
+    "id": "skull-crusher",
+    "name": "스컬 크러셔",
+    "muscle": "팔",
+    "description": "라잉 삼두",
+    "source": "builtin"
+  },
+  {
+    "id": "preacher-curl",
+    "name": "프리처 컬",
+    "muscle": "팔",
+    "description": "프리처 머신",
+    "source": "builtin"
+  },
+  {
+    "id": "concentration-curl",
+    "name": "컨센트레이션 컬",
+    "muscle": "팔",
+    "description": "집중 컬",
+    "source": "builtin"
+  },
+  {
+    "id": "crunch",
+    "name": "크런치",
+    "muscle": "복근",
+    "description": "복근 기본",
+    "source": "builtin"
+  },
+  {
+    "id": "leg-raise",
+    "name": "레그 레이즈",
+    "muscle": "복근",
+    "description": "하복부",
+    "source": "builtin"
+  },
+  {
+    "id": "plank",
+    "name": "플랭크",
+    "muscle": "복근",
+    "description": "코어 유지",
+    "source": "builtin"
+  },
+  {
+    "id": "russian-twist",
+    "name": "러시안 트위스트",
+    "muscle": "복근",
+    "description": "복사근 회전",
+    "source": "builtin"
+  },
+  {
+    "id": "ab-wheel",
+    "name": "앱 휠 롤아웃",
+    "muscle": "복근",
+    "description": "앱 휠",
+    "source": "builtin"
+  },
+  {
+    "id": "hanging-knee-raise",
+    "name": "행잉 니 레이즈",
+    "muscle": "복근",
+    "description": "매달려 무릎",
+    "source": "builtin"
+  },
+  {
+    "id": "burpee",
+    "name": "버피",
+    "muscle": "전신",
+    "description": "전신 맨몸",
+    "source": "builtin"
+  },
+  {
+    "id": "kettlebell-swing",
+    "name": "케틀벨 스윙",
+    "muscle": "전신",
+    "description": "전신 힙 힌지",
+    "source": "builtin"
+  }
+]

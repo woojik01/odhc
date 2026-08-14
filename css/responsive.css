@@ -1,0 +1,5 @@
+
+@media(min-width:900px){
+  #app{padding:24px 24px calc(var(--nav-h) + 24px)}
+  .bottom-nav{bottom:16px;border:1px solid var(--border);border-radius:20px;overflow:hidden}
+}
