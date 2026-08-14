@@ -1,3 +1,4 @@
+import '../mobile-focus-fix.js';
 
 const DB_NAME='odhc-v1';const DB_VER=1;
 export function openDB(){
