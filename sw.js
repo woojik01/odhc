@@ -1,4 +1,4 @@
-const CACHE='odhc-v5';
+const CACHE='odhc-v6';
 const ASSETS=[
   './',
   './index.html',
@@ -19,6 +19,7 @@ const ASSETS=[
   './js/utils/format.js',
   './js/services/backup.js',
   './js/services/csv.js',
+  './js/services/csv-import.js',
   './js/services/import.js',
   './data/exercises.json',
   './icons/icon-192.png',
