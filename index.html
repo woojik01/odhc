@@ -1,13 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ODHC - On Device Health Care</title>
+<meta name="description" content="빠른 기록, 캘린더 중심, 완전 온디바이스 헬스 기록 앱">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ODHC">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#fafafa">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/variables.css">
@@ -19,9 +22,7 @@
 <body>
 <div id="app"></div>
 <div id="nav"></div>
-
 <div id="ex-modal" class="modal"><div class="modal-box"><div class="row" style="justify-content:space-between"><div style="font-weight:800">운동 선택</div><button class="btn-secondary" id="ex-modal-close">닫기</button></div><div id="ex-modal-content" style="margin-top:12px"></div></div></div>
-
 <div id="new-ex-modal" class="modal"><div class="modal-box"><div class="row" style="justify-content:space-between"><div style="font-weight:800">새 운동 추가</div><button class="btn-secondary" id="new-ex-close">닫기</button></div>
 <form id="new-ex-form" class="stack" style="margin-top:12px">
 <input id="new-ex-name" placeholder="운동 이름 (필수)" required>
@@ -29,7 +30,6 @@
 <textarea id="new-ex-desc" placeholder="설명 (선택)"></textarea>
 <button class="btn-primary" type="submit">운동 추가</button>
 </form></div></div>
-
 <script type="module" src="js/app.js"></script>
 </body>
 </html>
