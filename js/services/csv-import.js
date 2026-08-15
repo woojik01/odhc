@@ -18,7 +18,7 @@ function parseCSV(text){
   return rows;
 }
 
-async function importCSV(file){
+export async function importCSV(file){
   const text=await file.text();
   const rows=parseCSV(text.trim());
   if(rows.length<2)throw new Error('CSV 데이터가 없습니다.');
@@ -42,24 +42,3 @@ async function importCSV(file){
   for(const workout of workouts.values())await put('workouts',workout);
   return workouts.size;
 }
-
-function install(){
-  const observer=new MutationObserver(()=>{
-    if(document.getElementById('odhc-csv-import'))return;
-    const fileInputs=[...document.querySelectorAll('input[type="file"]')];
-    const jsonInput=fileInputs.find(i=>/json/i.test(i.accept||''));
-    if(!jsonInput)return;
-    const wrapper=document.createElement('div');wrapper.className='card';wrapper.id='odhc-csv-import';wrapper.style.marginTop='12px';
-    wrapper.innerHTML='<div class="widget-title">CSV 가져오기</div><div style="font-size:13px;color:var(--sub);margin-bottom:8px">ODHC에서 내보낸 CSV 파일을 가져옵니다.</div><input id="odhc-csv-file" type="file" accept=".csv,text/csv" style="width:100%"><button class="btn-secondary" id="odhc-csv-btn" style="width:100%;margin-top:8px">CSV 가져오기</button>';
-    jsonInput.closest('.card,.stack')?.after(wrapper);
-    wrapper.querySelector('#odhc-csv-btn').onclick=async()=>{
-      const file=wrapper.querySelector('#odhc-csv-file').files[0];
-      if(!file){alert('CSV 파일을 선택하세요.');return;}
-      try{const count=await importCSV(file);alert(`${count}일의 운동 기록을 가져왔습니다.`);location.reload();}
-      catch(e){alert(`CSV 가져오기 실패: ${e.message}`);}
-    };
-  });
-  observer.observe(document.body,{childList:true,subtree:true});
-}
-
-install();
