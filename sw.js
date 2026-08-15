@@ -10,6 +10,7 @@ const ASSETS=[
   './css/components.css',
   './css/responsive.css',
   './js/app.js',
+  './js/version.js',
   './js/mobile-focus-fix.js',
   './js/db/database.js',
   './js/db/exercises.js',
