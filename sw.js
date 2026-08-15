@@ -1,4 +1,4 @@
-const CACHE='odhc-v6';
+const CACHE='odhc-v7';
 const ASSETS=[
   './',
   './index.html',
